@@ -1,0 +1,44 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+# 触发workflow的条件
+name: Node.js CI
+
+on:
+  push:
+    # 只有master分支发生push事件时，才会触发workflow
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+# jobs表示执行的一项或多项任务
+jobs:
+  # 任务的job_id，具体名称自定义，这里build代表打包
+  build:
+    # runs-on字段指定运行所需要的虚拟机环境。注意：这个是必填字段
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@v1
+        with:
+          node-version: v16.16.0
+
+      # 装依赖
+      - name: Install
+        run: yarn
+
+      # 打包
+      - name: Build
+        run: yarn build
+
+      #上传打包资源
+      - name: Deploy
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ARGS: '-rltgoDzvO'
+          SOURCE: 'dist/'
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: /www/wwwroot/www.littlesmart3.top/web-site/dist/
+          EXCLUDE: '/node_modules/'
