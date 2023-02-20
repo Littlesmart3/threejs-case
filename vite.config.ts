@@ -7,7 +7,10 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@': join(__dirname, 'src'),
-    },
+      '@': join(__dirname, 'src')
+    }
   },
+  server: {
+    port: 3344
+  }
 });
