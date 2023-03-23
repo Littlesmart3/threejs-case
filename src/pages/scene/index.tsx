@@ -9,7 +9,6 @@ const Scene: React.FC = () => {
   const domRef = useRef<HTMLDivElement>(null);
   const width = document.body.clientWidth;
   const height = document.body.clientHeight;
-
   // 循环动画id
   let animationFrameKey = 0;
 
