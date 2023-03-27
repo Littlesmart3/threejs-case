@@ -84,8 +84,8 @@ const Scene: React.FC = () => {
 
   //设置调试面板
   function setTweakpane() {
-    const cameraPanel = pane?.addFolder({ title: 'camera' });
-    const modelPanel = pane?.addFolder({ title: 'model' });
+    const cameraPanel = pane.get()?.addFolder({ title: 'camera' });
+    const modelPanel = pane.get()?.addFolder({ title: 'model' });
     const cameraParams = { 视角: cameraConfig.fov, near: cameraConfig.near, far: cameraConfig.far };
     const modelParams = { 旋转: modelConfig.rotation, 颜色: modelConfig.color };
 
@@ -129,6 +129,10 @@ const Scene: React.FC = () => {
     init();
     setTweakpane();
     window.addEventListener('resize', resize);
+    return () => {
+      // 卸载组件
+      pane.remove();
+    };
   }, []);
   return <div ref={domRef} />;
 };

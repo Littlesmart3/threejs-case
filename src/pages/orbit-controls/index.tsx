@@ -52,7 +52,7 @@ const Scene: React.FC = () => {
 
   //设置调试面板
   function setTweakpane() {
-    const controlsPanel = pane?.addFolder({ title: 'controls(控制器)' });
+    const controlsPanel = pane?.get()?.addFolder({ title: 'controls(控制器)' });
     const controlsParams = {
       enableDamping: use3d.controls.enableDamping,
       dampingFactor: use3d.controls.dampingFactor,
@@ -92,6 +92,9 @@ const Scene: React.FC = () => {
     init();
     setTweakpane();
     window.addEventListener('resize', () => use3d.resize());
+    return () => {
+      pane.remove?.();
+    };
   }, []);
   return <div ref={domRef} />;
 };

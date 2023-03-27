@@ -30,7 +30,7 @@ const modelConfig = {
 
 //设置调试面板
 function setTweakpane() {
-  const controlsPanel = pane?.addFolder({ title: 'controls(控制器)' });
+  const controlsPanel = pane.get()?.addFolder({ title: 'controls(控制器)' });
   const controlsParams = {
     enableDamping: use3d.controls.enableDamping,
     dampingFactor: use3d.controls.dampingFactor,
@@ -103,6 +103,5 @@ export function loaderGLTF(file: string | ArrayBuffer) {
   gltfLoader.parse(file, '', (gltf) => {
     use3d.scene.add(gltf.scene);
     use3d.initLight();
-    console.log(use3d);
   });
 }
