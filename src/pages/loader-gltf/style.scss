@@ -1,0 +1,10 @@
+.loader-gltf {
+  position: relative;
+  & > input {
+    position: absolute;
+    z-index: 10;
+  }
+  canvas {
+    opacity: 1;
+  }
+}

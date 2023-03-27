@@ -48,9 +48,6 @@ const Scene: React.FC = () => {
 
     // 将立方体添加到场景中
     use3d.scene.add(cube);
-
-    // 第一次调用渲染函数
-    use3d.requestAnimationFrame();
   }
 
   //设置调试面板
