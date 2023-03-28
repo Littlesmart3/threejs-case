@@ -6,7 +6,7 @@ import { useTweakpane } from '@/hooks/useTweakpane';
 const pane = useTweakpane('scene');
 
 // Three.js 场景组件
-const Scene: React.FC = () => {
+const OrbitControls: React.FC = () => {
   let use3d: BaseUse3d;
   const domRef = useRef<HTMLDivElement>(null);
 
@@ -100,4 +100,4 @@ const Scene: React.FC = () => {
 };
 
 // 导出组件
-export default Scene;
+export default OrbitControls;
