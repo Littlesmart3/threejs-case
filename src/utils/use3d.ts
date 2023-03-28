@@ -13,9 +13,12 @@ export class BaseUse3d {
   public controls: OrbitControls;
   /** 循环动画id */
   protected animationFrameKey: number;
+  /** 循环渲染列表 */
+  protected renderList: { key: string; function: Function }[];
 
   public constructor(dom: HTMLDivElement) {
     this.animationFrameKey = 0;
+    this.renderList = [];
     // 创建场景
     this.scene = new THREE.Scene();
     // 创建相机
@@ -29,13 +32,15 @@ export class BaseUse3d {
     // 初始化配置
     this.init();
     // 窗口尺寸调整
-    this.resize();
+    window.addEventListener('resize', () => this.resize(dom));
   }
 
   // 初始化
   private init() {
     // 默认配置灯光
     this.initLight();
+    // 初始化控制器
+    this.initControls();
     // 渲染
     this.render();
     this.scene.background = new THREE.Color('#fff');
@@ -45,12 +50,6 @@ export class BaseUse3d {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     dom.appendChild(this.renderer.domElement);
   }
-
-  // // 模型分组
-  // private groupingModel(){
-  //   // 主要模型（可操作的）
-  //   this.scene.add(new )
-  // }
 
   // 初始化环境贴图
   private initHDR() {
@@ -65,10 +64,10 @@ export class BaseUse3d {
       this.scene.environment = envMap;
       this.scene.traverse((obj) => {
         if (obj instanceof THREE.Mesh) {
-          obj.material.color.convertSRGBToLinear();
-          obj.material.map.encoding = THREE.sRGBEncoding;
-          obj.material.emissiveMap.encoding = THREE.sRGBEncoding;
-          obj.material.emissiveMap.needsUpdate = true;
+          obj.material.color?.convertSRGBToLinear();
+          if (obj.material.map) obj.material.map.encoding = THREE.sRGBEncoding;
+          if (obj.material.emissiveMap) obj.material.emissiveMap.encoding = THREE.sRGBEncoding;
+          if (obj.material.emissiveMap) obj.material.emissiveMap.needsUpdate = true;
         }
       });
     });
@@ -105,10 +104,18 @@ export class BaseUse3d {
 
   /** 循环渲染 */
   public render(): void {
+    //渲染自定义function
+    this.renderList.forEach((i) => i.function());
     // 渲染场景
     this.renderer.render(this.scene, this.camera);
     // 循环调用 animate 方法
     this.animationFrameKey = requestAnimationFrame(this.render.bind(this));
+  }
+
+  public setRenderList(key: string, func: Function) {
+    const item = this.renderList.find((i) => i.key === key);
+    if (!item?.function) this.renderList.push({ key: key, function: func });
+    else throw new Error(`已经存在key为${key}的function`);
   }
 
   /** 关闭循环渲染 */
@@ -117,10 +124,10 @@ export class BaseUse3d {
   }
 
   /** 窗口尺寸调整 */
-  public resize(): void {
-    this.camera.aspect = document.body.clientWidth / document.body.clientHeight;
+  public resize(dom: HTMLDivElement): void {
+    this.camera.aspect = dom.clientWidth / dom.clientHeight;
     this.camera.updateProjectionMatrix();
-    this.renderer.setSize(document.body.clientWidth, document.body.clientHeight);
+    this.renderer.setSize(dom.clientWidth, dom.clientHeight);
   }
 
   /** 清空场景内的所有数据 */

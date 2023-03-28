@@ -43,7 +43,7 @@ const Scene: React.FC = () => {
 
     // 创建一个立方体
     const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshBasicMaterial({ color: modelConfig.color });
+    const material = new THREE.MeshPhysicalMaterial({ color: modelConfig.color });
     const cube = new THREE.Mesh(geometry, material);
 
     // 将立方体添加到场景中
@@ -91,7 +91,7 @@ const Scene: React.FC = () => {
   useEffect(() => {
     init();
     setTweakpane();
-    window.addEventListener('resize', () => use3d.resize());
+    // window.addEventListener('resize', () => use3d.resize());
     return () => {
       pane.remove?.();
     };

@@ -29,7 +29,7 @@ const Scene: React.FC = () => {
     /** 立方体旋转偏移量 x */
     rotation: 0.001,
     /** 颜色 */
-    color: '#914a62'
+    color: '#ffffff'
   };
 
   // 1.创建场景对象
@@ -43,6 +43,7 @@ const Scene: React.FC = () => {
 
   /** 初始化 */
   function init() {
+    scene.background = new THREE.Color('#fff');
     renderer = new THREE.WebGLRenderer({ antialias: true });
     // 设置渲染器尺寸
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -53,14 +54,26 @@ const Scene: React.FC = () => {
 
     // 创建一个立方体
     const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshBasicMaterial({ color: modelConfig.color });
+    const material = new THREE.MeshPhysicalMaterial({ color: modelConfig.color });
+
     cube = new THREE.Mesh(geometry, material);
 
     // 将立方体添加到场景中
     scene.add(cube);
+    createLight();
 
     // 第一次调用渲染函数
     render();
+  }
+
+  function createLight() {
+    // 创建一个平行光
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.intensity = 1;
+    // 设置平行光的位置
+    directionalLight.position.set(10, 10, 10);
+    // // 将平行光添加到场景中
+    scene.add(directionalLight);
   }
 
   // 渲染
@@ -113,8 +126,10 @@ const Scene: React.FC = () => {
         render();
       });
       modelPanel?.addInput(modelParams, '颜色').on('change', (e) => {
-        if (cube.material instanceof THREE.MeshBasicMaterial) {
+        if (cube.material instanceof THREE.MeshPhysicalMaterial) {
           // 通过mesh对象访问其材质，并将其颜色修改为其他颜色
+          console.log('e.value', e.value);
+
           cube.material.color.set(e.value);
           render();
         }

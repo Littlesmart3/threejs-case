@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import { BaseUse3d } from '@/utils/use3d';
 import { useTweakpane } from '@/hooks/useTweakpane';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
+// import fragmentShader from './shader/fragment.fs';
+// import vertexShader from './shader/vertex.vs';
+import { vertexShader, fragmentShader } from './shader';
 
 let use3d: BaseUse3d;
 // 调试面板实例
@@ -79,29 +80,28 @@ function init(dom: HTMLDivElement) {
 
   // 创建一个立方体
   const geometry = new THREE.BoxGeometry();
-  const material = new THREE.MeshPhysicalMaterial({ color: modelConfig.color });
+
+  const material = new THREE.ShaderMaterial({
+    uniforms: {
+      uTime: { value: 0 }
+    },
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShader
+  });
   const cube = new THREE.Mesh(geometry, material);
 
   // 将立方体添加到场景中
   use3d.scene.add(cube);
+  // 自动围绕目标旋转
+  use3d.controls.autoRotate = true;
+  use3d.controls.target = cube.position;
+  use3d.setRenderList('autoRotation', () => {
+    use3d.controls.update();
+  });
 }
 
 // 主函数
 export default function main(dom: HTMLDivElement) {
   init(dom);
   // setTweakpane();
-}
-
-// 加载 gltf、glb 模型
-export function loaderGLTF(file: string | ArrayBuffer) {
-  use3d.clearScene();
-  const gltfLoader = new GLTFLoader();
-  const dracoLoader = new DRACOLoader();
-  // 使用谷歌的 Draco 编码几何数据的插件
-  dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
-  gltfLoader.setDRACOLoader(dracoLoader);
-  gltfLoader.parse(file, '', (gltf) => {
-    use3d.scene.add(gltf.scene);
-    use3d.initLight();
-  });
 }
